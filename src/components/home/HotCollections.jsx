@@ -195,8 +195,7 @@ const HotCollections = () => {
                   }
                 }}
                 style={{
-                  willChange: "transform",
-                  width: `${carouselItems.length * itemWidthPercent}%`,
+                  willChange: "transform",           
                   transform: `translateX(-${currentStart * itemWidthPercent}%)`,
                   transition: disableTransition ? "none" : `transform ${transitionMs}ms cubic-bezier(0.2,0.8,0.2,1)`,
                 }}
