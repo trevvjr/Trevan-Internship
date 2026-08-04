@@ -90,12 +90,6 @@ const HotCollections = () => {
             </div>
           </div>
           <div className="col-lg-4 col-md-4 col-sm-12 text-center text-md-end">
-            <button className="btn btn-outline-primary me-2" onClick={handlePrev} aria-label="Previous collections">
-              <i className="fa fa-chevron-left" />
-            </button>
-            <button className="btn btn-outline-primary" onClick={handleNext} aria-label="Next collections">
-              <i className="fa fa-chevron-right" />
-            </button>
           </div>
         </div>
 
