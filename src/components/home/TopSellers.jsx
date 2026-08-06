@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
-import { getAuthorProfile } from "../../utils/authorProfiles";
+import { getAuthorDisplayName } from "../../utils/authorProfiles";
 
 const TopSellers = () => {
   const [sellers, setSellers] = useState([]);
@@ -25,9 +25,8 @@ const TopSellers = () => {
           <div className="col-md-12">
             <ol className="author_list">
               {sellers.map((seller, index) => {
-                const authorProfile = getAuthorProfile(seller);
-                const authorName = authorProfile?.name || seller.authorName || seller.name || "Unknown Seller";
-                const authorRouteId = seller.authorId || seller.id || index + 1;
+                const authorName = getAuthorDisplayName(seller) || seller.authorName || seller.name || "Unknown Seller";
+                const authorRouteId = seller.authorId || seller.creatorId || seller.ownerId || seller.id || index + 1;
 
                 return (
                 <li key={seller.id || seller.authorId || index}>

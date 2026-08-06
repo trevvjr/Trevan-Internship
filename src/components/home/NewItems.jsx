@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
 import Skeleton from "../UI/Skeleton";
-import { getAuthorProfile } from "../../utils/authorProfiles";
+import { getAuthorDisplayName } from "../../utils/authorProfiles";
 
 const NewItems = () => {
   const [items, setItems] = useState([]);
@@ -285,9 +285,8 @@ const NewItems = () => {
                   const title = item?.title || item?.name || "Untitled";
                   const price = item?.price ?? item?.cost ?? "-";
                   const likes = item?.likes ?? item?.like ?? 0;
-                  const authorProfile = getAuthorProfile(item);
-                  const authorName = authorProfile?.name || item?.author || item?.creator || item?.owner || "Unknown Creator";
-                  const authorRouteId = item?.authorId || item?.creatorId || item?.ownerId || item?.id || itemId;
+                  const authorName = getAuthorDisplayName(item);
+                  const authorRouteId = item?.authorId || item?.creatorId || item?.ownerId || itemId;
                   const authorSrc = item?.authorImage || item?.creatorImage || AuthorImage;
                   const nftSrc = item?.nftImage || item?.image || nftImage;
                   const toLink = itemId ? `/item-details/${itemId}` : "/item-details";

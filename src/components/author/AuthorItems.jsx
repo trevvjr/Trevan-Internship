@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
+import { getAuthorDisplayName } from "../../utils/authorProfiles";
 
 const AuthorItems = ({ authorId }) => {
   const [items, setItems] = useState([]);
@@ -16,7 +17,7 @@ const AuthorItems = ({ authorId }) => {
 
         const [hotData, newData] = await Promise.all([hotRes.json(), newRes.json()]);
         const combined = [...(Array.isArray(hotData) ? hotData : []), ...(Array.isArray(newData) ? newData : [])];
-        const filtered = combined.filter((item) => String(item.authorId ?? item.creatorId ?? item.ownerId ?? item.id) === String(authorId));
+        const filtered = combined.filter((item) => String(item.authorId ?? item.creatorId ?? item.ownerId) === String(authorId));
         setItems(filtered);
       } catch (error) {
         setItems([]);
@@ -56,7 +57,7 @@ const AuthorItems = ({ authorId }) => {
                 <div className="nft__item">
                   <div className="author_list_pp">
                     <Link to={`/author/${authorId}`}>
-                      <img className="lazy" src={item.authorImage || AuthorImage} alt={title} />
+                      <img className="lazy" src={item.authorImage || AuthorImage} alt={getAuthorDisplayName(item)} />
                       <i className="fa fa-check"></i>
                     </Link>
                   </div>

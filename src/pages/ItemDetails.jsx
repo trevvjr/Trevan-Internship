@@ -4,7 +4,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import AuthorImage from "../images/author_thumbnail.jpg";
 import nftImage from "../images/nftImage.jpg";
 import Skeleton from "../components/UI/Skeleton";
-import { getAuthorProfile } from "../utils/authorProfiles";
+import { getAuthorDisplayName } from "../utils/authorProfiles";
 
 const ItemDetails = () => {
   const { id } = useParams();
@@ -143,10 +143,9 @@ const ItemDetails = () => {
   }
 
   const displayId = item.nftId || item.id;
-  const authorRouteId = item.authorId || item.creatorId || item.ownerId || item.id || displayId;
-  const authorProfile = getAuthorProfile(item);
-  const ownerName = authorProfile?.name || item.author || item.creator || item.owner || "Unknown Owner";
-  const creatorName = authorProfile?.name || item.creator || item.author || item.owner || "Unknown Creator";
+  const authorRouteId = item.authorId || item.creatorId || item.ownerId;
+  const ownerName = getAuthorDisplayName(item) || "Unknown Owner";
+  const creatorName = item.creator || item.author || item.owner || ownerName || "Unknown Creator";
 
   return (
     <div id="wrapper">

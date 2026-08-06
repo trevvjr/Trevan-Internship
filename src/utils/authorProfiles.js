@@ -1,49 +1,42 @@
-const AUTHOR_PROFILES = {
-  83937449: {
-    id: 83937449,
-    name: 'Monica Lucas',
-    username: '@monicaaaa',
-    wallet: 'UDHUHWudhwd78wdt7edb32uidbwyuidhg7wUHIFUHWewiqdj87dy7',
-    followers: '573 followers',
-  },
-  5575769: {
-    id: 5575769,
-    name: 'Lori Hart',
-    username: '@lorihart',
-    wallet: '0x8f4c1d2a3b4e5f67890abcdef1234567890',
-    followers: '420 followers',
-  },
-  31906377: {
-    id: 31906377,
-    name: 'Gayle Hicks',
-    username: '@gaylehicks',
-    wallet: '0x1a2b3c4d5e6f7890abcdef1234567890',
-    followers: '312 followers',
-  },
-  72378156: {
-    id: 72378156,
-    name: 'Stacy Long',
-    username: '@stacylong',
-    wallet: '0x1234abcd5678ef90fedcba0987654321',
-    followers: '284 followers',
-  },
-  18556210: {
-    id: 18556210,
-    name: 'Mamie Barnett',
-    username: '@mamiebarnett',
-    wallet: '0x9abcdef0123456789abcdef0123456789',
-    followers: '351 followers',
-  },
-  73855012: {
-    id: 73855012,
-    name: 'Jesse Watson',
-    username: '@jessewatson',
-    wallet: '0xabcdeffedcba9876543210fedcba9876543210',
-    followers: '256 followers',
-  },
+const normalizeValue = (value) => String(value ?? "").trim();
+
+const AUTHOR_DIRECTORY = {
+	"83937449": "Monica Lucas",
+	"73855012": "Lori Hart",
+	"49986179": "Gayle Hicks",
+	"90432259": "Stacy Long",
+	"40460691": "Mamie Barnett",
+	"87818782": "Jimmy Wright",
+	"52045866": "Claude Banks",
+	"39623982": "Ida Chapman",
+	"18556210": "Fred Ryan",
+	"55757699": "Nicholas Daniels",
+	"31906377": "Karla Sharp",
+	"72378156": "Franklin Greer",
 };
 
-export const getAuthorProfile = (item = {}) => {
-  const authorId = item.authorId ?? item.creatorId ?? item.ownerId ?? item.id;
-  return AUTHOR_PROFILES[authorId] || null;
+export const getAuthorDisplayName = (item = {}) => {
+	const authorId = normalizeValue(item.authorId ?? item.creatorId ?? item.ownerId);
+	const name =
+		AUTHOR_DIRECTORY[authorId] ||
+		item.author ||
+		item.creator ||
+		item.owner ||
+		item.authorName ||
+		item.creatorName ||
+		item.ownerName;
+	return normalizeValue(name) || "Unknown Author";
+};
+
+export const buildAuthorProfile = (authorId = "", item = {}) => {
+	const normalizedAuthorId = normalizeValue(authorId);
+	const name = item.authorName || item.name || item.author || item.creator || item.owner || AUTHOR_DIRECTORY[normalizedAuthorId] || "Unknown Author";
+
+	return {
+		id: normalizedAuthorId,
+		name,
+		username: normalizedAuthorId ? `@${normalizedAuthorId}` : "@unknown",
+		wallet: item.wallet || item.address || "No wallet linked",
+		followers: item.followers ? `${item.followers} followers` : `${item.likes ?? 0} followers`,
+	};
 };

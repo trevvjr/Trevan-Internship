@@ -1,8 +1,24 @@
-import { getAuthorProfile } from './authorProfiles';
+import { buildAuthorProfile, getAuthorDisplayName } from './authorProfiles';
 
-describe('getAuthorProfile', () => {
-  it('returns a distinct profile for live API author ids', () => {
-    expect(getAuthorProfile({ authorId: 83937449 }).name).toBe('Monica Lucas');
-    expect(getAuthorProfile({ authorId: 5575769 }).name).toBe('Lori Hart');
-  });
+describe('authorProfiles helpers', () => {
+	const item = {
+		authorId: 73855012,
+		author: 'Lori Hart',
+		wallet: '0xabc',
+		likes: 12,
+	};
+
+	it('builds the profile from the same item data', () => {
+		expect(buildAuthorProfile('73855012', item)).toMatchObject({
+			id: '73855012',
+			name: 'Lori Hart',
+			username: '@73855012',
+			wallet: '0xabc',
+			followers: '12 followers',
+		});
+	});
+
+	it('falls back to the author display name helper', () => {
+		expect(getAuthorDisplayName({ authorId: 73855012 })).toBe('Lori Hart');
+	});
 });
