@@ -3,12 +3,14 @@ import EthImage from "../images/ethereum.svg";
 import { Link, useLocation, useParams } from "react-router-dom";
 import AuthorImage from "../images/author_thumbnail.jpg";
 import nftImage from "../images/nftImage.jpg";
+import Skeleton from "../components/UI/Skeleton";
+import { getAuthorProfile } from "../utils/authorProfiles";
 
 const ItemDetails = () => {
   const { id } = useParams();
   const location = useLocation();
   const [item, setItem] = useState(location.state?.item || null);
-  const [loading, setLoading] = useState(!location.state?.item);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -16,11 +18,15 @@ const ItemDetails = () => {
   }, []);
 
   useEffect(() => {
+    const minSkeletonMs = 700;
+    let timeoutId;
+
     if (location.state?.item) {
       setItem(location.state.item);
-      setLoading(false);
       setError(null);
-      return;
+      const start = Date.now();
+      timeoutId = setTimeout(() => setLoading(false), minSkeletonMs);
+      return () => clearTimeout(timeoutId);
     }
 
     if (!id) return;
@@ -29,21 +35,24 @@ const ItemDetails = () => {
     setLoading(true);
     setError(null);
 
-    fetch(`https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections?id=${id}`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Network response was not ok (${res.status})`);
+    const start = Date.now();
+    Promise.all([
+      fetch("https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections"),
+      fetch("https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems"),
+    ])
+      .then(async ([hotRes, newRes]) => {
+        if (!hotRes.ok || !newRes.ok) {
+          throw new Error("One or more item endpoints failed to load");
         }
-        return res.json();
-      })
-      .then((data) => {
-        const found = Array.isArray(data)
-          ? data.find(
-              (entry) =>
-                String(entry.id) === String(id) ||
-                String(entry.nftId) === String(id)
-            )
-          : data;
+
+        const [hotData, newData] = await Promise.all([hotRes.json(), newRes.json()]);
+        const combined = [...(Array.isArray(hotData) ? hotData : []), ...(Array.isArray(newData) ? newData : [])];
+        const found = combined.find(
+          (entry) =>
+            String(entry.id) === String(id) ||
+            String(entry.nftId) === String(id)
+        );
+
         if (found) {
           setItem(found);
         } else {
@@ -54,8 +63,16 @@ const ItemDetails = () => {
         setError(err.message);
       })
       .finally(() => {
-        setLoading(false);
+        const elapsed = Date.now() - start;
+        const remaining = minSkeletonMs - elapsed;
+        if (remaining > 0) {
+          timeoutId = setTimeout(() => setLoading(false), remaining);
+        } else {
+          setLoading(false);
+        }
       });
+
+    return () => clearTimeout(timeoutId);
   }, [id, location.state?.item]);
 
   if (loading) {
@@ -64,8 +81,45 @@ const ItemDetails = () => {
         <div className="no-bottom no-top" id="content">
           <div id="top"></div>
           <section aria-label="section" className="mt90 sm-mt-0">
-            <div className="container text-center">
-              <p>Loading item details...</p>
+            <div className="container">
+              <div className="row">
+                <div className="col-md-6 text-center">
+                  <Skeleton width="100%" height="360px" borderRadius="18px" />
+                </div>
+                <div className="col-md-6">
+                  <div className="item_info">
+                    <Skeleton width="70%" height="32px" borderRadius="10px" />
+                    <div className="item_id mb-2" style={{ marginTop: "16px" }}>
+                      <Skeleton width="40%" height="20px" borderRadius="10px" />
+                    </div>
+                    <div className="item_info_counts d-flex gap-3" style={{ marginBottom: "20px" }}>
+                      <Skeleton width="25%" height="24px" borderRadius="10px" />
+                      <Skeleton width="25%" height="24px" borderRadius="10px" />
+                    </div>
+                    <Skeleton width="100%" height="100px" borderRadius="12px" />
+                    <div className="d-flex flex-row" style={{ gap: "24px", marginTop: "20px" }}>
+                      <div style={{ flex: 1 }}>
+                        <Skeleton width="60%" height="20px" borderRadius="10px" />
+                        <div className="item_author" style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "12px" }}>
+                          <Skeleton width="60px" height="60px" borderRadius="50%" />
+                          <Skeleton width="40%" height="18px" borderRadius="10px" />
+                        </div>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <Skeleton width="60%" height="20px" borderRadius="10px" />
+                        <div className="item_author" style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "12px" }}>
+                          <Skeleton width="60px" height="60px" borderRadius="50%" />
+                          <Skeleton width="40%" height="18px" borderRadius="10px" />
+                        </div>
+                        <div className="nft-item-price" style={{ marginTop: "16px", display: "flex", alignItems: "center", gap: "10px" }}>
+                          <Skeleton width="32px" height="32px" borderRadius="12px" />
+                          <Skeleton width="40%" height="24px" borderRadius="12px" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
         </div>
@@ -89,6 +143,10 @@ const ItemDetails = () => {
   }
 
   const displayId = item.nftId || item.id;
+  const authorRouteId = item.authorId || item.creatorId || item.ownerId || item.id || displayId;
+  const authorProfile = getAuthorProfile(item);
+  const ownerName = authorProfile?.name || item.author || item.creator || item.owner || "Unknown Owner";
+  const creatorName = authorProfile?.name || item.creator || item.author || item.owner || "Unknown Creator";
 
   return (
     <div id="wrapper">
@@ -125,13 +183,13 @@ const ItemDetails = () => {
                       <h6>Owner</h6>
                       <div className="item_author">
                         <div className="author_list_pp">
-                          <Link to="/author">
+                          <Link to={`/author/${authorRouteId}`}>
                             <img className="lazy" src={item.authorImage || AuthorImage} alt={item.title || "Author"} />
                             <i className="fa fa-check"></i>
                           </Link>
                         </div>
                         <div className="author_list_info">
-                          <Link to="/author">{item.author || "Unknown Owner"}</Link>
+                          <Link to={`/author/${authorRouteId}`}>{ownerName}</Link>
                         </div>
                       </div>
                     </div>
@@ -142,13 +200,13 @@ const ItemDetails = () => {
                       <h6>Creator</h6>
                       <div className="item_author">
                         <div className="author_list_pp">
-                          <Link to="/author">
+                          <Link to={`/author/${authorRouteId}`}>
                             <img className="lazy" src={item.authorImage || AuthorImage} alt={item.title || "Creator"} />
                             <i className="fa fa-check"></i>
                           </Link>
                         </div>
                         <div className="author_list_info">
-                          <Link to="/author">{item.author || "Unknown Creator"}</Link>
+                          <Link to={`/author/${authorRouteId}`}>{creatorName}</Link>
                         </div>
                       </div>
                     </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
+import Skeleton from "../UI/Skeleton";
 
 
 
@@ -16,6 +17,10 @@ const HotCollections = () => {
   const trackRef = useRef(null);
 
   useEffect(() => {
+    const minSkeletonMs = 700;
+    const start = Date.now();
+    let timeoutId;
+
     fetch("https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections")
       .then((res) => {
         if (!res.ok) throw new Error(`Network response was not ok (${res.status})`);
@@ -23,7 +28,17 @@ const HotCollections = () => {
       })
       .then((data) => setCollections(data))
       .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        const elapsed = Date.now() - start;
+        const remaining = minSkeletonMs - elapsed;
+        if (remaining > 0) {
+          timeoutId = setTimeout(() => setLoading(false), remaining);
+        } else {
+          setLoading(false);
+        }
+      });
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const items = loading ? new Array(6).fill({}) : collections.slice(0, 6);
@@ -98,6 +113,27 @@ const HotCollections = () => {
             <div className="col-12 text-center mt-4">
               <p>Error loading hot collections: {error}</p>
             </div>
+          </div>
+        ) : loading ? (
+          <div className="row">
+            {new Array(4).fill(null).map((_, index) => (
+              <div className="col-lg-3 col-md-6 col-sm-12" key={index}>
+                <div className="nft_coll">
+                  <div className="nft_wrap">
+                    <Skeleton width="100%" height="200px" borderRadius="16px" />
+                  </div>
+                  <div className="nft_coll_pp" style={{ marginTop: "-30px", marginBottom: "10px" }}>
+                    <Skeleton width="60px" height="60px" borderRadius="50%" />
+                  </div>
+                  <div className="nft_coll_info">
+                    <Skeleton width="75%" height="20px" borderRadius="8px" />
+                    <div className="mt-2">
+                      <Skeleton width="50%" height="16px" borderRadius="8px" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <div className="position-relative">
@@ -213,8 +249,8 @@ const HotCollections = () => {
                             <img src={nftSrc} className="lazy img-fluid" alt={title} />
                           </Link>
                         </div>
-                        <div className="nft_coll_pp">
-                          <Link to="/author">
+                        <div className="nft_coll_pp d-flex align-items-center">
+                          <Link to={`/author/${item.authorId || item.id || index + 1}`}>
                             <img className="lazy pp-coll" src={authorSrc} alt={title} />
                           </Link>
                           <i className="fa fa-check" />
@@ -237,5 +273,6 @@ const HotCollections = () => {
     </section>
   );
 };
-
+  
+  
 export default HotCollections;

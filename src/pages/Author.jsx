@@ -1,10 +1,14 @@
 import React from "react";
 import AuthorBanner from "../images/author_banner.jpg";
 import AuthorItems from "../components/author/AuthorItems";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import AuthorImage from "../images/author_thumbnail.jpg";
+import { getAuthorProfile } from "../utils/authorProfiles";
 
 const Author = () => {
+  const { id } = useParams();
+  const authorProfile = getAuthorProfile({ authorId: id }) || null;
+
   return (
     <div id="wrapper">
       <div className="no-bottom no-top" id="content">
@@ -30,10 +34,10 @@ const Author = () => {
                       <i className="fa fa-check"></i>
                       <div className="profile_name">
                         <h4>
-                          Monica Lucas
-                          <span className="profile_username">@monicaaaa</span>
+                          {authorProfile?.name || "Unknown Author"}
+                          <span className="profile_username">{authorProfile?.username || "@unknown"}</span>
                           <span id="wallet" className="profile_wallet">
-                            UDHUHWudhwd78wdt7edb32uidbwyuidhg7wUHIFUHWewiqdj87dy7
+                            {authorProfile?.wallet || "No wallet linked"}
                           </span>
                           <button id="btn_copy" title="Copy Text">
                             Copy
@@ -44,7 +48,7 @@ const Author = () => {
                   </div>
                   <div className="profile_follow de-flex">
                     <div className="de-flex-col">
-                      <div className="profile_follower">573 followers</div>
+                      <div className="profile_follower">{authorProfile?.followers || "0 followers"}</div>
                       <Link to="#" className="btn-main">
                         Follow
                       </Link>
@@ -55,7 +59,7 @@ const Author = () => {
 
               <div className="col-md-12">
                 <div className="de_tab tab_simple">
-                  <AuthorItems />
+                  <AuthorItems authorId={id} />
                 </div>
               </div>
             </div>
