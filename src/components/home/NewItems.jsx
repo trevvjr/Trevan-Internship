@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
@@ -6,7 +6,6 @@ import Skeleton from "../UI/Skeleton";
 import {
   getCreatorDisplayName,
   getCreatorRouteId,
-  getOwnerDisplayName,
 } from "../../utils/authorProfiles";
 
 const NewItems = () => {
@@ -93,7 +92,6 @@ const NewItems = () => {
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
   const [hoveredArrow, setHoveredArrow] = useState(null);
-  const trackRef = useRef(null);
   const transitionMs = 500;
 
   const clonesBefore = itemsToShow.slice(-visibleCount);
@@ -143,7 +141,7 @@ const NewItems = () => {
   };
 
   return (
-    <section id="section-items" className="no-bottom">
+    <section id="section-items" className="no-bottom" data-aos="fade-up">
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
@@ -255,7 +253,6 @@ const NewItems = () => {
               onTouchEnd={onTouchEnd}
             >
               <div
-                ref={trackRef}
                 className="d-flex"
                 onTransitionEnd={() => {
                   if (currentStart >= visibleCount + itemCount) {
@@ -290,7 +287,6 @@ const NewItems = () => {
                   const price = item?.price ?? item?.cost ?? "-";
                   const likes = item?.likes ?? item?.like ?? 0;
                   const creatorName = getCreatorDisplayName(item);
-                  const ownerName = getOwnerDisplayName(item);
                   const creatorRouteId = getCreatorRouteId(item);
                   const authorProfilePath = creatorRouteId ? `/author/${creatorRouteId}` : null;
                   const authorSrc = item?.authorImage || item?.creatorImage || AuthorImage;

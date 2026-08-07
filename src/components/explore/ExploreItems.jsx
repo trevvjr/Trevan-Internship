@@ -6,7 +6,6 @@ import Skeleton from "../UI/Skeleton";
 import {
   getCreatorDisplayName,
   getCreatorRouteId,
-  getOwnerDisplayName,
 } from "../../utils/authorProfiles";
 
 const ExploreItems = () => {
@@ -176,7 +175,6 @@ const ExploreItems = () => {
         visibleItems.map((item) => {
           const creatorRouteId = getCreatorRouteId(item);
           const creatorName = getCreatorDisplayName(item);
-          const ownerName = getOwnerDisplayName(item);
           const itemRouteId = item?.nftId || item?.id;
           const itemTitle = item?.title || "Untitled";
           const itemPrice = Number(item?.price || 0).toFixed(2);

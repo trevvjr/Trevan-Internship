@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
@@ -6,7 +6,6 @@ import Skeleton from "../UI/Skeleton";
 import {
   getCreatorDisplayName,
   getCreatorRouteId,
-  getOwnerDisplayName,
 } from "../../utils/authorProfiles";
 
 
@@ -19,7 +18,6 @@ const HotCollections = () => {
   const [hoveredArrow, setHoveredArrow] = useState(null);
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
-  const trackRef = useRef(null);
 
   useEffect(() => {
     const minSkeletonMs = 700;
@@ -50,7 +48,6 @@ const HotCollections = () => {
   const visibleCount = 4;
   const itemCount = Math.max(items.length, 1);
   const itemWidthPercent = 100 / visibleCount;
-  const maxStart = Math.max(itemCount - visibleCount, 0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [disableTransition, setDisableTransition] = useState(false);
   const transitionMs = 500;
@@ -100,7 +97,7 @@ const HotCollections = () => {
   
 
   return (
-    <section id="section-collections" className="no-bottom">
+    <section id="section-collections" className="no-bottom" data-aos="fade-up">
       <div className="container">
         <div className="row align-items-center mb-4">
           <div className="col-lg-8 col-md-8 col-sm-12">
@@ -206,7 +203,6 @@ const HotCollections = () => {
               onTouchEnd={onTouchEnd}
             >
               <div
-                ref={trackRef}
                 className="d-flex"
                 onTransitionEnd={() => {
                   if (currentStart >= visibleCount + itemCount) {
@@ -244,7 +240,6 @@ const HotCollections = () => {
                   const creatorRouteId = getCreatorRouteId(item);
                   const authorProfilePath = creatorRouteId ? `/author/${creatorRouteId}` : null;
                   const creatorName = getCreatorDisplayName(item);
-                  const ownerName = getOwnerDisplayName(item);
 
                   return (
                     <div
