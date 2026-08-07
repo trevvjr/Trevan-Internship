@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
 import Skeleton from "../UI/Skeleton";
-import { getAuthorDisplayName } from "../../utils/authorProfiles";
+import {
+  getCreatorDisplayName,
+  getCreatorRouteId,
+  getOwnerDisplayName,
+} from "../../utils/authorProfiles";
 
 const NewItems = () => {
   const [items, setItems] = useState([]);
@@ -285,8 +289,10 @@ const NewItems = () => {
                   const title = item?.title || item?.name || "Untitled";
                   const price = item?.price ?? item?.cost ?? "-";
                   const likes = item?.likes ?? item?.like ?? 0;
-                  const authorName = getAuthorDisplayName(item);
-                  const authorRouteId = item?.authorId || item?.creatorId || item?.ownerId || itemId;
+                  const creatorName = getCreatorDisplayName(item);
+                  const ownerName = getOwnerDisplayName(item);
+                  const creatorRouteId = getCreatorRouteId(item);
+                  const authorProfilePath = creatorRouteId ? `/author/${creatorRouteId}` : null;
                   const authorSrc = item?.authorImage || item?.creatorImage || AuthorImage;
                   const nftSrc = item?.nftImage || item?.image || nftImage;
                   const toLink = itemId ? `/item-details/${itemId}` : "/item-details";
@@ -300,19 +306,30 @@ const NewItems = () => {
                     >
                       <div className="nft__item">
                         <div className="author_list_pp">
-                          <Link
-                            to={`/author/${authorRouteId}`}
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="top"
-                            title={`Creator: ${authorName}`}
-                          >
-                            {loading ? (
-                              <Skeleton width="60px" height="60px" borderRadius="50%" />
-                            ) : (
-                              <img className="lazy" src={authorSrc} alt={authorName} />
-                            )}
-                            <i className="fa fa-check"></i>
-                          </Link>
+                          {authorProfilePath ? (
+                            <Link
+                              to={authorProfilePath}
+                              data-bs-toggle="tooltip"
+                              data-bs-placement="top"
+                              title={`Creator: ${creatorName}`}
+                            >
+                              {loading ? (
+                                <Skeleton width="60px" height="60px" borderRadius="50%" />
+                              ) : (
+                                <img className="lazy" src={authorSrc} alt={creatorName} />
+                              )}
+                              <i className="fa fa-check"></i>
+                            </Link>
+                          ) : (
+                            <>
+                              {loading ? (
+                                <Skeleton width="60px" height="60px" borderRadius="50%" />
+                              ) : (
+                                <img className="lazy" src={authorSrc} alt={creatorName} />
+                              )}
+                              <i className="fa fa-check"></i>
+                            </>
+                          )}
                         </div>
                         <div className="de_countdown">{countdownText}</div>
 

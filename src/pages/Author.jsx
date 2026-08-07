@@ -1,17 +1,43 @@
 import React, { useEffect, useState } from "react";
 import AuthorBanner from "../images/author_banner.jpg";
 import AuthorItems from "../components/author/AuthorItems";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import AuthorImage from "../images/author_thumbnail.jpg";
 
 const Author = () => {
   const { id } = useParams();
   const [authorProfile, setAuthorProfile] = useState(null);
+  const [authorCollection, setAuthorCollection] = useState([]);
   const [loading, setLoading] = useState(Boolean(id));
+  const [baseFollowers, setBaseFollowers] = useState(0);
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  const buildProfileUsername = (name) => {
+    const normalizedName = String(name || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-z0-9_]/g, "");
+
+    return normalizedName ? `@${normalizedName}` : "@author";
+  };
+
+  const parseFollowersCount = (followersValue) => {
+    const asNumber = Number(followersValue);
+    if (Number.isFinite(asNumber) && asNumber >= 0) {
+      return Math.floor(asNumber);
+    }
+
+    const matched = String(followersValue ?? "").match(/\d+/);
+    return matched ? Number(matched[0]) : 0;
+  };
 
   useEffect(() => {
     if (!id) {
       setAuthorProfile(null);
+      setAuthorCollection([]);
+      setBaseFollowers(0);
+      setIsFollowing(false);
       setLoading(false);
       return;
     }
@@ -21,32 +47,46 @@ const Author = () => {
 
     const fetchAuthor = async () => {
       try {
-        const response = await fetch("https://us-central1-nft-cloud-functions.cloudfunctions.net/topSellers", { signal: controller.signal });
+        const response = await fetch(
+          `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${id}`,
+          { signal: controller.signal }
+        );
         const data = await response.json();
-        const seller = Array.isArray(data)
-          ? data.find((entry) => String(entry.authorId ?? entry.creatorId ?? entry.ownerId ?? entry.id) === String(id))
-          : null;
+        const author = Array.isArray(data) ? data[0] : data;
+        const parsedFollowers = parseFollowersCount(author?.followers);
 
         setAuthorProfile(
-          seller
+          response.ok
             ? {
                 id,
-                name: seller.authorName || seller.author || seller.name || "Unknown Author",
-                username: `@${id}`,
-                wallet: seller.wallet || seller.address || "No wallet linked",
-                followers: seller.followers ? `${seller.followers} followers` : `${seller.price ?? 0} ETH volume`,
+                name: author?.authorName || author?.author || author?.name || "Unknown Author",
+                username: buildProfileUsername(
+                  author?.authorName || author?.author || author?.name || "Unknown Author"
+                ),
+                wallet: author?.wallet || author?.address || "No wallet linked",
+                authorImage: author?.authorImage || "",
               }
             : {
                 id,
                 name: "Unknown Author",
-                username: `@${id}`,
+                username: "@author",
                 wallet: "No wallet linked",
-                followers: "0 followers",
+                authorImage: "",
               }
+        );
+
+        setBaseFollowers(response.ok ? parsedFollowers : 0);
+        setIsFollowing(false);
+
+        setAuthorCollection(
+          response.ok && Array.isArray(author?.nftCollection) ? author.nftCollection : []
         );
       } catch (error) {
         if (error.name !== "AbortError") {
           setAuthorProfile(null);
+          setAuthorCollection([]);
+          setBaseFollowers(0);
+          setIsFollowing(false);
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -59,6 +99,8 @@ const Author = () => {
 
     return () => controller.abort();
   }, [id]);
+
+  const displayedFollowers = Math.max(baseFollowers + (isFollowing ? 1 : 0), 0);
 
   return (
     <div id="wrapper">
@@ -80,7 +122,7 @@ const Author = () => {
                 <div className="d_profile de-flex">
                   <div className="de-flex-col">
                     <div className="profile_avatar">
-                      <img src={AuthorImage} alt="" />
+                      <img src={authorProfile?.authorImage || AuthorImage} alt={authorProfile?.name || "Author"} />
 
                       <i className="fa fa-check"></i>
                       <div className="profile_name">
@@ -99,10 +141,10 @@ const Author = () => {
                   </div>
                   <div className="profile_follow de-flex">
                     <div className="de-flex-col">
-                      <div className="profile_follower">{authorProfile?.followers || "0 followers"}</div>
-                      <Link to="#" className="btn-main">
-                        Follow
-                      </Link>
+                      <div className="profile_follower">{displayedFollowers} followers</div>
+                      <button className="btn-main" type="button" onClick={() => setIsFollowing((prev) => !prev)}>
+                        {isFollowing ? "Unfollow" : "Follow"}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -110,7 +152,13 @@ const Author = () => {
 
               <div className="col-md-12">
                 <div className="de_tab tab_simple">
-                  <AuthorItems authorId={id} />
+                  <AuthorItems
+                    authorId={id}
+                    authorCollection={authorCollection}
+                    authorImage={authorProfile?.authorImage}
+                    authorName={authorProfile?.name}
+                    loading={loading}
+                  />
                 </div>
               </div>
             </div>

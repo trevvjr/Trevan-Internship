@@ -15,22 +15,67 @@ const AUTHOR_DIRECTORY = {
 	"72378156": "Franklin Greer",
 };
 
+const pickFirstNonEmpty = (values = []) => {
+	for (const value of values) {
+		const normalized = normalizeValue(value);
+		if (normalized) {
+			return normalized;
+		}
+	}
+
+	return "";
+};
+
+export const getCreatorDisplayName = (item = {}) => {
+	const creatorName = pickFirstNonEmpty([
+		item.creatorName,
+		item.creator,
+		item.authorName,
+		item.author,
+		item.name,
+		AUTHOR_DIRECTORY[normalizeValue(item.creatorId)],
+		AUTHOR_DIRECTORY[normalizeValue(item.authorId)],
+	]);
+
+	return creatorName || "Unknown Creator";
+};
+
+export const getOwnerDisplayName = (item = {}) => {
+	const ownerName = pickFirstNonEmpty([
+		item.ownerName,
+		item.owner,
+		item.currentOwner,
+		item.holderName,
+		AUTHOR_DIRECTORY[normalizeValue(item.ownerId)],
+		AUTHOR_DIRECTORY[normalizeValue(item.currentOwnerId)],
+	]);
+
+	return ownerName || "Unknown Owner";
+};
+
+export const getCreatorRouteId = (item = {}) =>
+	pickFirstNonEmpty([item.creatorId, item.authorId, item.author]);
+
+export const getOwnerRouteId = (item = {}) =>
+	pickFirstNonEmpty([item.ownerId, item.currentOwnerId]);
+
 export const getAuthorDisplayName = (item = {}) => {
-	const authorId = normalizeValue(item.authorId ?? item.creatorId ?? item.ownerId);
-	const name =
-		AUTHOR_DIRECTORY[authorId] ||
-		item.author ||
-		item.creator ||
-		item.owner ||
-		item.authorName ||
-		item.creatorName ||
-		item.ownerName;
-	return normalizeValue(name) || "Unknown Author";
+	const creatorName = getCreatorDisplayName(item);
+	if (creatorName !== "Unknown Creator") {
+		return creatorName;
+	}
+
+	const ownerName = getOwnerDisplayName(item);
+	if (ownerName !== "Unknown Owner") {
+		return ownerName;
+	}
+
+	return "Unknown Author";
 };
 
 export const buildAuthorProfile = (authorId = "", item = {}) => {
 	const normalizedAuthorId = normalizeValue(authorId);
-	const name = item.authorName || item.name || item.author || item.creator || item.owner || AUTHOR_DIRECTORY[normalizedAuthorId] || "Unknown Author";
+	const name = item.authorName || item.name || item.author || item.creator || item.owner || "Unknown Author";
 
 	return {
 		id: normalizedAuthorId,

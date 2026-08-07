@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
 import Skeleton from "../UI/Skeleton";
-import { getAuthorDisplayName } from "../../utils/authorProfiles";
+import {
+  getCreatorDisplayName,
+  getCreatorRouteId,
+  getOwnerDisplayName,
+} from "../../utils/authorProfiles";
 
 
 
@@ -237,8 +241,10 @@ const HotCollections = () => {
                   const title = item.title || "Loading...";
                   const code = item.code ? `ERC-${item.code}` : "ERC-000";
                   const itemId = item.nftId ?? item.id;
-                  const authorRouteId = item.authorId || item.creatorId || item.ownerId;
-                  const authorName = getAuthorDisplayName(item);
+                  const creatorRouteId = getCreatorRouteId(item);
+                  const authorProfilePath = creatorRouteId ? `/author/${creatorRouteId}` : null;
+                  const creatorName = getCreatorDisplayName(item);
+                  const ownerName = getOwnerDisplayName(item);
 
                   return (
                     <div
@@ -253,9 +259,13 @@ const HotCollections = () => {
                           </Link>
                         </div>
                         <div className="nft_coll_pp d-flex align-items-center">
-                          <Link to={`/author/${authorRouteId}`}>
-                            <img className="lazy pp-coll" src={authorSrc} alt={authorName} />
-                          </Link>
+                          {authorProfilePath ? (
+                            <Link to={authorProfilePath}>
+                              <img className="lazy pp-coll" src={authorSrc} alt={creatorName} />
+                            </Link>
+                          ) : (
+                            <img className="lazy pp-coll" src={authorSrc} alt={creatorName} />
+                          )}
                           <i className="fa fa-check" />
                         </div>
                         <div className="nft_coll_info">

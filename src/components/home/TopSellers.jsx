@@ -26,22 +26,34 @@ const TopSellers = () => {
             <ol className="author_list">
               {sellers.map((seller, index) => {
                 const authorName = getAuthorDisplayName(seller) || seller.authorName || seller.name || "Unknown Seller";
-                const authorRouteId = seller.authorId || seller.creatorId || seller.ownerId || seller.id || index + 1;
+                const authorRouteId = seller.authorId || seller.creatorId || seller.ownerId;
+                const authorProfilePath = authorRouteId ? `/author/${authorRouteId}` : null;
 
                 return (
                 <li key={seller.id || seller.authorId || index}>
                   <div className="author_list_pp">
-                    <Link to={`/author/${authorRouteId}`}>
-                      <img
-                        className="lazy pp-author"
-                        src={seller.authorImage || AuthorImage}
-                        alt={authorName}
-                      />
-                      <i className="fa fa-check"></i>
-                    </Link>
+                    {authorProfilePath ? (
+                      <Link to={authorProfilePath}>
+                        <img
+                          className="lazy pp-author"
+                          src={seller.authorImage || AuthorImage}
+                          alt={authorName}
+                        />
+                        <i className="fa fa-check"></i>
+                      </Link>
+                    ) : (
+                      <>
+                        <img
+                          className="lazy pp-author"
+                          src={seller.authorImage || AuthorImage}
+                          alt={authorName}
+                        />
+                        <i className="fa fa-check"></i>
+                      </>
+                    )}
                   </div>
                   <div className="author_list_info">
-                    <Link to={`/author/${authorRouteId}`}>{authorName}</Link>
+                    {authorProfilePath ? <Link to={authorProfilePath}>{authorName}</Link> : <span>{authorName}</span>}
                     <span>{seller.price ? `${seller.price} ETH` : "N/A"}</span>
                   </div>
                 </li>

@@ -1,37 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
-import { getAuthorDisplayName } from "../../utils/authorProfiles";
+import { getCreatorDisplayName, getOwnerDisplayName } from "../../utils/authorProfiles";
 
-const AuthorItems = ({ authorId }) => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const [hotRes, newRes] = await Promise.all([
-          fetch("https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections"),
-          fetch("https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems"),
-        ]);
-
-        const [hotData, newData] = await Promise.all([hotRes.json(), newRes.json()]);
-        const combined = [...(Array.isArray(hotData) ? hotData : []), ...(Array.isArray(newData) ? newData : [])];
-        const filtered = combined.filter((item) => String(item.authorId ?? item.creatorId ?? item.ownerId) === String(authorId));
-        setItems(filtered);
-      } catch (error) {
-        setItems([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (authorId) {
-      loadItems();
-    } else {
-      setLoading(false);
-    }
-  }, [authorId]);
+const AuthorItems = ({ authorId, authorCollection = [], authorImage = "", authorName = "", loading = false }) => {
+  const items = Array.isArray(authorCollection)
+    ? authorCollection.map((item) => ({
+        ...item,
+        authorId: item.authorId ?? authorId,
+        authorName: item.authorName || item.author || item.name || authorName,
+      }))
+    : [];
 
   if (loading) {
     return <div className="text-center py-4">Loading author items...</div>;
@@ -51,13 +30,23 @@ const AuthorItems = ({ authorId }) => {
             const price = item.price ?? item.cost ?? "0";
             const likes = item.likes ?? item.like ?? 0;
             const image = item.nftImage || item.image || "";
+            const displayAuthorName = getCreatorDisplayName({
+              ...item,
+              authorName: item.authorName || authorName,
+              author: item.author || authorName,
+            });
+            const displayOwnerName = getOwnerDisplayName({
+              ...item,
+              ownerName: item.ownerName || item.owner || authorName,
+              owner: item.owner || authorName,
+            });
 
             return (
               <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={itemId || index}>
                 <div className="nft__item">
                   <div className="author_list_pp">
                     <Link to={`/author/${authorId}`}>
-                      <img className="lazy" src={item.authorImage || AuthorImage} alt={getAuthorDisplayName(item)} />
+                      <img className="lazy" src={item.authorImage || authorImage || AuthorImage} alt={displayAuthorName} />
                       <i className="fa fa-check"></i>
                     </Link>
                   </div>

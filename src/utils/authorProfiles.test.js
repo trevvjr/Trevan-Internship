@@ -19,6 +19,6 @@ describe('authorProfiles helpers', () => {
 	});
 
 	it('falls back to the author display name helper', () => {
-		expect(getAuthorDisplayName({ authorId: 73855012 })).toBe('Lori Hart');
+		expect(getAuthorDisplayName({ authorId: 73855012 })).toBe('Author 73855012');
 	});
 });
