@@ -35,7 +35,7 @@ const AuthorItems = ({ authorId, authorCollection = [], authorImage = "", author
               authorName: item.authorName || authorName,
               author: item.author || authorName,
             });
-            const displayOwnerName = getOwnerDisplayName({
+            getOwnerDisplayName({
               ...item,
               ownerName: item.ownerName || item.owner || authorName,
               owner: item.owner || authorName,
@@ -56,15 +56,15 @@ const AuthorItems = ({ authorId, authorCollection = [], authorImage = "", author
                         <button>Buy Now</button>
                         <div className="nft__item_share">
                           <h4>Share</h4>
-                          <a href="" target="_blank" rel="noreferrer">
+                          <button type="button" aria-label="Share on Facebook" style={{ background: "transparent", border: "none", padding: 0 }}>
                             <i className="fa fa-facebook fa-lg"></i>
-                          </a>
-                          <a href="" target="_blank" rel="noreferrer">
+                          </button>
+                          <button type="button" aria-label="Share on Twitter" style={{ background: "transparent", border: "none", padding: 0 }}>
                             <i className="fa fa-twitter fa-lg"></i>
-                          </a>
-                          <a href="">
+                          </button>
+                          <button type="button" aria-label="Share by email" style={{ background: "transparent", border: "none", padding: 0 }}>
                             <i className="fa fa-envelope fa-lg"></i>
-                          </a>
+                          </button>
                         </div>
                       </div>
                     </div>

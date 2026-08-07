@@ -59,7 +59,7 @@ const HotCollections = () => {
 
   useEffect(() => {
     setCurrentStart(initialIndex);
-  }, [itemCount]);
+  }, [initialIndex, itemCount]);
 
   const handlePrev = () => {
     if (isAnimating || disableTransition) return;

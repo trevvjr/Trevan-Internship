@@ -59,7 +59,6 @@ const ItemDetails = () => {
     if (location.state?.item) {
       setItem(location.state.item);
       setError(null);
-      const start = Date.now();
       timeoutId = setTimeout(() => setLoading(false), minSkeletonMs);
       return () => clearTimeout(timeoutId);
     }
