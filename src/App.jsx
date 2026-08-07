@@ -33,11 +33,20 @@ const AppContent = () => {
     return () => clearTimeout(timeoutId);
   }, [location.pathname]);
 
+  const getRouteSkeletonVariant = (path) => {
+    if (path.startsWith("/item-details")) return "item-details";
+    if (path.startsWith("/author")) return "author";
+    if (path === "/explore") return "explore";
+    return "home";
+  };
+
+  const routeSkeletonVariant = getRouteSkeletonVariant(location.pathname);
+
   return (
     <>
       <Nav />
       {isRouteLoading ? (
-        <RouteSkeleton />
+        <RouteSkeleton variant={routeSkeletonVariant} />
       ) : (
         <Routes>
           <Route path="/" element={<Home />} />
