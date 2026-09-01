@@ -1,70 +1,53 @@
-# Getting Started with Create React App
-
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Ultraverse | NFT Marketplace
+Ultraverse is a responsive NFT marketplace web application built as part of my Frontend Simplified training. Starter code and the project’s color palette were provided, while I implemented the application’s interactive functionality and features.
 
-## Available Scripts
+This project helped me strengthen my JavaScript skills, work with API data, troubleshoot functionality, and build an interactive user experience.
 
-In the project directory, you can run:
+Live Demo
+View the live project: https://trevan-internship.vercel.app/
 
-### `npm start`
+! Technologies Used !
+HTML5
+CSS3
+JavaScript
+REST API
+Git
+GitHub
+Vercel
+Visual Studio Code
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+! Features I Implemented !
+I personally coded the application’s functionality, including:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+REST API integration for dynamic NFT data
+Follow and unfollow functionality
+Interactive countdown timers
+NFT filtering
+Skeleton loading states
+UI transitions
+Responsive functionality across different screen sizes
 
-### `npm test`
+! My Contribution !
+My responsibility was to build out the functionality and turn the provided foundation into an interactive web application.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+I used JavaScript to implement user interactions and dynamic features, integrated API data, created filtering functionality, developed countdown timers, and added loading states and transitions to improve the overall user experience.
 
-### `npm run build`
+! Challenges & What I Learned !
+One of the most challenging parts of this project was implementing the countdown timer.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+When the feature did not initially work as expected, I returned to my training materials, reviewed the concepts, tested my implementation, and continued troubleshooting until the timer worked correctly.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+This experience strengthened my understanding of JavaScript and taught me the importance of breaking problems into smaller pieces when debugging.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Throughout development, I also used console logging to test functions, track application behavior, and identify issues in my code
 
-### `npm run eject`
+! Responsive Design !
+Ultraverse is responsive and designed to function across different screen sizes, including desktop and mobile devices.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Working on this project gave me additional experience developing functionality while considering how users interact with an application across different devices.
+! About Me !
+I am an Information Technology student at Florida State College at Jacksonville and currently completing the Frontend Simplified bootcamp.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+I am developing my skills in JavaScript, HTML, CSS, React, responsive web development, API integration, debugging, and modern front-end development. I enjoy building interactive applications, solving development challenges, and continuing to improve the user experience through code.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
